@@ -5,18 +5,20 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc && tsc-alias",
-    "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts"
+    "start": "dotenv -- node dist/index.js",
+    "dev": "dotenv -- tsx watch src/index.ts"
   },
   "author": "Vishal Chaudhary",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^17.2.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mongoose": "^9.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
+    "dotenv-cli": "^11.0.0",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
