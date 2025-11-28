@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client"
+  output = "../src/lib/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String   @unique
+  password      String?
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  verificationCodes VerificationCode[]
+  refreshToken      RefreshToken[]
+}
+
+model VerificationCode {
+  id        String @id @default(cuid())
+  code      String
+  type      VerificationType
+  userId    String 
+  createdAt DateTime @default(now())
+  expiresAt DateTime 
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  userId     String
+  token      String   @unique   // Hashed
+  parentId   String? 
+  isActive   Boolean  @default(true)
+  revokedAt  DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  user   User          @relation(fields: [userId], references: [id])
+  parent RefreshToken? @relation("TokenFamily", fields: [parentId], references: [id])
+  children RefreshToken[] @relation("TokenFamily")
+}
+
+enum Provider {
+  EMAIL 
+  GOOGLE
+}
+
+enum VerificationType {
+  CONFIRM_EMAIL
+  PASSWORD_RESET
+}

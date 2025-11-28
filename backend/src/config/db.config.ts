@@ -1,13 +1,10 @@
-import mongoose from "mongoose";
-import { Env } from "./env.config";
-import { logger } from "@/utils/logger";
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@/lib/prisma/client";
 
-export const connectMongoDB = async () => {
-  try {
-    await mongoose.connect(Env.MONGODB_URL);
-    logger.info("MongoDB connected");
-  } catch (error) {
-    logger.warn("Failed to connect to mongodb", error);
-    process.exit(1);
-  }
-};
+const connectionString = `${process.env.DATABASE_URL}`;
+
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
+
+export { prisma };
