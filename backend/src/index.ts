@@ -1,6 +1,7 @@
 import express from "express";
 import { Env } from "@/config/env.config";
 import { connectMongoDB } from "./config/db.config";
+import { logger } from "./utils/logger";
 
 const app = express();
 const PORT = Env.PORT;
@@ -11,5 +12,5 @@ app.get("/health", (_req, res) => {
 
 app.listen(PORT, async () => {
   await connectMongoDB();
-  console.log(`Server running at http://localhost:${PORT}`);
+  logger.info(`Server running at http://localhost:${PORT}`);
 });
