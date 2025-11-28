@@ -3,4 +3,4 @@ dist
 .env
 logs
 
-src/lib/prisma
+src/lib/prisma/
