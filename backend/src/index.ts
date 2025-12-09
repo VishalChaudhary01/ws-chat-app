@@ -8,7 +8,7 @@ import { AppError } from "./utils/app-error";
 import { StatusCode } from "./config/http.config";
 import appRoutes from "./routes";
 
-const app = express();
+export const app = express();
 app.use(
   cors({
     origin: "*",
