@@ -18,7 +18,14 @@ model User {
 
   verificationCodes VerificationCode[]
   refreshToken      RefreshToken[]
+
+  chats Chat[] @relation("ChatParticipants")
+
+  messages Message[]
+
+  createdChats Chat[] @relation("CreatedBy")
 }
+
 
 model VerificationCode {
   id        String @id @default(cuid())
@@ -40,6 +47,40 @@ model RefreshToken {
   createdAt  DateTime @default(now())
 
   user   User          @relation(fields: [userId], references: [id])
+}
+
+model Chat {
+  id          String   @id @default(cuid())
+  isGroup     Boolean  @default(false)
+  groupName   String?
+
+  createdById String
+  createdBy   User     @relation("CreatedBy", fields: [createdById], references: [id])
+
+  participants User[]  @relation("ChatParticipants")
+
+  messages     Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+
+  content   String
+
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id])
+
+  replyToId String?
+  replyTo   Message? @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies   Message[] @relation("MessageReplies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Provider {
