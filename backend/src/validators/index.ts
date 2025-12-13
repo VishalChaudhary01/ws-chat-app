@@ -29,3 +29,5 @@ export const otpSchema = z
   .string("OTP is required")
   .trim()
   .regex(/^\d{6}$/, "OTP must be a 6-digit number");
+
+export const idSchema = z.string("Id is required").min(1, "Invalid id");
