@@ -36,7 +36,7 @@ beforeEach(() => {
 
   mockRes = {
     status: mockStatus,
-    json: mockStatus,
+    json: mockJson,
   };
   mockReq = { userId: "user-123" };
 
