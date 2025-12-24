@@ -9,14 +9,11 @@ import { StatusCode } from "./config/http.config";
 import appRoutes from "./routes";
 
 export const app = express();
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+const PORT = Env.PORT;
+
+app.use(cors({ origin: Env.FRONTEND_URL, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
-const PORT = Env.PORT;
 
 app.get("/health", (_req, res) => {
   res.status(200).json({ message: "Healthy server" });

@@ -13,7 +13,6 @@ import { clearCookie, getCookie, setCookie } from "@/utils/cookie";
 
 export async function signup(req: Request, res: Response) {
   const inputs: SignupInput = req.body;
-  console.log("Inputs", inputs);
 
   const { user, OTP } = await prisma.$transaction(async (tx) => {
     const existingUser = await tx.user.findUnique({
@@ -61,6 +60,7 @@ export async function signup(req: Request, res: Response) {
   res.status(StatusCode.CREATED).json({
     message:
       "User registered successfully. Please check your email for verification code.",
+    stage: "code_verification",
   });
 }
 
@@ -147,7 +147,7 @@ export async function verifyOTP(req: Request, res: Response) {
 
     return res.status(StatusCode.OK).json({
       message: "Code verified successfully. You can now reset your password.",
-      verified: true,
+      stage: "password_reset",
     });
   } else {
     accessToken = signJwt({ userId: user.id });
@@ -167,7 +167,6 @@ export async function verifyOTP(req: Request, res: Response) {
   setCookie(res, "refresh_token", refreshToken);
   res.status(StatusCode.OK).json({
     message: "Email verified successfully",
-    verified: true,
     accessToken,
   });
 }
@@ -255,6 +254,7 @@ export async function resendCode(req: Request, res: Response) {
 
   res.status(StatusCode.OK).json({
     message: "New verification code sent",
+    stage: "code_verification",
   });
 }
 
@@ -270,7 +270,7 @@ export async function forgotPassword(req: Request, res: Response) {
     res.status(StatusCode.OK).json({
       message:
         "If an account exists with this email, you will receive a password reset code.",
-      stage: "code_sent",
+      stage: "code_verification",
     });
 
   if (!user) {
