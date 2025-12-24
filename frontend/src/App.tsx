@@ -4,6 +4,9 @@ import SigninPage from "./pages/auth/signin";
 import AppLayout from "./pages/layout";
 import HomePage from "./pages/home";
 import SignupPage from "./pages/auth/signup";
+import VerifyOTPPage from "./pages/auth/verify-otp";
+import ForgotPasswordPage from "./pages/auth/forgot-password";
+import ResetPasswordPage from "./pages/auth/reset-password";
 
 export default function App() {
   const authRoutes = [
@@ -14,6 +17,18 @@ export default function App() {
     {
       element: <SignupPage />,
       path: "/signup",
+    },
+    {
+      element: <VerifyOTPPage />,
+      path: "verify-otp",
+    },
+    {
+      element: <ForgotPasswordPage />,
+      path: "forgot-password",
+    },
+    {
+      element: <ResetPasswordPage />,
+      path: "reset-password",
     },
   ];
 

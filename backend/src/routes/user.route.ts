@@ -3,7 +3,7 @@ import { Router } from "express";
 
 const userRoutes = Router();
 
-userRoutes.get("/profil", getProfile);
+userRoutes.get("/profile", getProfile);
 userRoutes.get("/", getUsers);
 
 export default userRoutes;

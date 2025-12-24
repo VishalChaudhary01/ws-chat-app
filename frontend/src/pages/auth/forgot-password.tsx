@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema, type SignupDTO } from "../../validators/auth.validator";
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordDTO,
+} from "../../validators/auth.validator";
 import {
   Button,
   ColoredHeading,
@@ -12,37 +15,35 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
-import { signupMutationFn } from "../../lib/api-functions";
+import { forgotPasswordMutationFn } from "../../lib/api-functions";
 
-export default function SignupPage() {
+export default function ForgotPasswordPage() {
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupDTO>({
-    resolver: zodResolver(signupSchema),
+  } = useForm<ForgotPasswordDTO>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
-      name: "",
       email: "",
-      password: "",
     },
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: signupMutationFn,
+    mutationFn: forgotPasswordMutationFn,
   });
 
-  const onSubmit = (inputs: SignupDTO) => {
-    mutate(inputs, {
+  const onSubmit = (input: ForgotPasswordDTO) => {
+    mutate(input, {
       onSuccess: (res) => {
-        toast.success(res.message);
         localStorage.setItem("stage", res.stage);
-        navigate("/verify-otp");
+        toast.success(res.message);
+        navigate("/");
       },
       onError: (error: any) => {
-        toast.error(error.response.data.message || "Failed to signup");
+        toast.error(error.response.data.message || "Failed to signin");
       },
     });
   };
@@ -53,28 +54,19 @@ export default function SignupPage() {
       className="shadow-base flex h-full w-full max-w-lg flex-col items-center rounded-md bg-neutral-100 px-6 py-14 dark:bg-neutral-700"
     >
       <FormHeading>
-        Welcome! <ColoredHeading>Signup</ColoredHeading>
+        Forgot <ColoredHeading>Password</ColoredHeading>
       </FormHeading>
 
-      <FormContent error={errors.name?.message}>
-        <Label>Name</Label>
-        <Input {...register("name")} />
-      </FormContent>
       <FormContent error={errors.email?.message}>
         <Label>Email</Label>
         <Input {...register("email")} />
       </FormContent>
 
-      <FormContent error={errors.password?.message}>
-        <Label>Password</Label>
-        <Input type="password" {...register("password")} />
-      </FormContent>
-
       <Button type="submit" disabled={isPending}>
-        Sign Up
+        Send Request
       </Button>
       <p className="mt-2 text-sm text-neutral-800 dark:text-neutral-400">
-        Already have an account?{" "}
+        Don't want to reset password?{" "}
         <Link to="/signin" className="font-medium underline underline-offset-1">
           Sign In
         </Link>

@@ -9,7 +9,10 @@ export async function getProfile(req: Request, res: Response) {
     throw new AppError("Unauthorize user", StatusCode.UNAUTHORIZED);
   }
 
-  const user = prisma.user.findUnique({ where: { id } });
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: { id: true, name: true, email: true },
+  });
   if (!user) {
     throw new AppError("User not found", StatusCode.NOT_FOUND);
   }
@@ -21,7 +24,9 @@ export async function getProfile(req: Request, res: Response) {
 }
 
 export async function getUsers(req: Request, res: Response) {
-  const users = await prisma.user.findMany();
+  const users = await prisma.user.findMany({
+    select: { id: true, name: true, email: true },
+  });
 
   res.status(StatusCode.OK).json({
     message: "All users fetched successfully",
