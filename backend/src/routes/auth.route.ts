@@ -36,6 +36,6 @@ authRoutes.post(
   resetPassword
 );
 authRoutes.post("/signout", verifyAuth, signout);
-authRoutes.post("/rotate-token", verifyAuth, rotateRefreshToken);
+authRoutes.post("/rotate-token", rotateRefreshToken);
 
 export default authRoutes;

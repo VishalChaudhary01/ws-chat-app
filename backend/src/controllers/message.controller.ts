@@ -12,34 +12,83 @@ export async function sendMessage(req: Request, res: Response) {
 
   const inputs: SendMessageInput = req.body;
 
-  const { chatId, content, replyToId } = inputs;
+  const { chatId, participantId, content, replyToId } = inputs;
 
-  const chat = await prisma.chat.findFirst({
-    where: { id: chatId, participants: { some: { id: userId } } },
-  });
-  if (!chat) {
-    throw new AppError("Unauthorized user", StatusCode.UNAUTHORIZED);
+  let resolvedChatId: string;
+
+  if (chatId) {
+    const chat = await prisma.chat.findFirst({
+      where: { id: chatId, participants: { some: { id: userId } } },
+    });
+    if (!chat) {
+      throw new AppError("Unauthorized user", StatusCode.UNAUTHORIZED);
+    }
+
+    resolvedChatId = chat.id;
+  } else if (participantId) {
+    if (participantId === userId) {
+      throw new AppError(
+        "Cannot send message to yourself",
+        StatusCode.BAD_REQUEST
+      );
+    }
+
+    let chat = await prisma.chat.findFirst({
+      where: {
+        isGroup: false,
+        participants: {
+          every: {
+            id: { in: [userId, participantId] },
+          },
+        },
+      },
+    });
+
+    if (!chat) {
+      chat = await prisma.chat.create({
+        data: {
+          isGroup: false,
+          createdById: userId,
+          participants: {
+            connect: [{ id: userId }, { id: participantId }],
+          },
+        },
+      });
+    }
+
+    resolvedChatId = chat.id;
+  } else {
+    throw new AppError(
+      "chatId or participantId is required",
+      StatusCode.BAD_REQUEST
+    );
   }
 
   if (replyToId) {
     const replyMessage = await prisma.message.findFirst({
-      where: { id: replyToId, chatId },
+      where: {
+        id: replyToId,
+        chatId: resolvedChatId,
+      },
     });
+
     if (!replyMessage) {
-      throw new AppError("ReplyTo message not found", StatusCode.NOT_FOUND);
+      throw new AppError("Reply message not found", StatusCode.NOT_FOUND);
     }
   }
 
-  await prisma.message.create({
+  const message = await prisma.message.create({
     data: {
-      chatId,
+      chatId: resolvedChatId,
       senderId: userId,
-      content: content,
+      content,
       replyToId: replyToId ?? null,
     },
   });
 
   //   TODO SOCKET ---> emit message to all participants
 
-  res.status(StatusCode.OK).json({ message: "Message send successfully" });
+  res
+    .status(StatusCode.OK)
+    .json({ message: "Message send successfully", chatId: message.chatId });
 }

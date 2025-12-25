@@ -10,7 +10,7 @@ import { Router } from "express";
 const chatRoutes = Router();
 
 chatRoutes.post("/", inputValidator(createChatSchema), createChat);
-chatRoutes.get("/", getUserChats);
 chatRoutes.get("/:id", getChatWithMessage);
+chatRoutes.get("/", getUserChats);
 
 export default chatRoutes;

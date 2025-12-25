@@ -93,6 +93,9 @@ export async function getUserChats(req: Request, res: Response) {
     },
     include: {
       participants: {
+        where: {
+          id: { not: userId },
+        },
         select: {
           id: true,
           name: true,
@@ -103,12 +106,6 @@ export async function getUserChats(req: Request, res: Response) {
           id: true,
           name: true,
         },
-      },
-      messages: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 1,
       },
     },
     orderBy: {
@@ -166,6 +163,8 @@ export async function getChatWithMessage(req: Request, res: Response) {
   if (!chat) {
     throw new AppError("Chat not found", StatusCode.NOT_FOUND);
   }
+
+  console.log(chat);
 
   res.status(StatusCode.OK).json({
     message: "Chat with messages fetched successfully",

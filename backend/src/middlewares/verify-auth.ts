@@ -12,12 +12,16 @@ export async function verifyAuth(
   try {
     const authorization = req.headers.authorization;
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      return res.status(403).json({ message: "Unauthorize user" });
+      return res
+        .status(StatusCode.UNAUTHORIZED)
+        .json({ message: "Token not found" });
     }
 
     const token = authorization.split(" ")[1];
     if (!token) {
-      return res.status(403).json({ message: "Unauthorize user" });
+      return res
+        .status(StatusCode.UNAUTHORIZED)
+        .json({ message: "Unauthorize user" });
     }
     const payload = verifyJwt<TPayload>(token, Env.ACCESS_TOKEN_SECRET);
     if (!payload || !payload.userId) {

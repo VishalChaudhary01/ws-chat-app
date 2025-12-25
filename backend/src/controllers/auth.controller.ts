@@ -438,10 +438,9 @@ export async function signout(req: Request, res: Response) {
 }
 
 export async function rotateRefreshToken(req: Request, res: Response) {
-  const userId = req.userId;
   const refreshToken = getCookie(req, "refresh_token");
-  if (!refreshToken || !userId) {
-    throw new AppError("Unauthorized", StatusCode.UNAUTHORIZED);
+  if (!refreshToken) {
+    throw new AppError("Refresh token not found", StatusCode.UNAUTHORIZED);
   }
   const hashedRefreshToken = hashToken(refreshToken);
   const refToken = await prisma.refreshToken.findFirst({
@@ -455,7 +454,7 @@ export async function rotateRefreshToken(req: Request, res: Response) {
     );
   }
 
-  if (refToken.userId !== userId || !refToken.isActive) {
+  if (!refToken.isActive) {
     // Theft refresh_token detected revoke all token of this user
     await prisma.refreshToken.updateMany({
       where: { userId: refToken.userId },
@@ -474,17 +473,19 @@ export async function rotateRefreshToken(req: Request, res: Response) {
   // Generate new refresh + access token
   const { refreshToken: newRefreshToken, hashedRefreshToken: newHashedToken } =
     generateRefreshToken();
-  const accessToken = signJwt({ userId }, Env.ACCESS_TOKEN_SECRET);
+  const accessToken = signJwt(
+    { userId: refToken.userId },
+    Env.ACCESS_TOKEN_SECRET
+  );
 
   await prisma.refreshToken.create({
     data: {
-      userId,
+      userId: refToken.userId,
       token: newHashedToken,
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     },
   });
 
-  clearCookie(res, "refresh_token");
   setCookie(res, "refresh_token", newRefreshToken);
 
   res.status(StatusCode.OK).json({
