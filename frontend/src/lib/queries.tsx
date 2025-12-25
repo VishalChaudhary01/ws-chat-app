@@ -1,11 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProfileQueryFn, getUsersQueryFn } from "./api-functions";
+import {
+  getChatsQueryFn,
+  getMessagesQueryFn,
+  getProfileQueryFn,
+  getUsersQueryFn,
+} from "./api-functions";
 
 export const useProfileQuery = () => {
   return useQuery({
     queryKey: ["profile"],
     queryFn: getProfileQueryFn,
-    staleTime: 5000,
+    staleTime: 500,
   });
 };
 
@@ -14,5 +19,20 @@ export const useUsersQuery = () => {
     queryKey: ["users"],
     queryFn: getUsersQueryFn,
     staleTime: 200,
+  });
+};
+
+export const useChatsQuery = () => {
+  return useQuery({
+    queryKey: ["chats"],
+    queryFn: getChatsQueryFn,
+  });
+};
+
+export const useMessagesQuery = (id: string) => {
+  return useQuery({
+    queryKey: ["messages", id],
+    queryFn: () => getMessagesQueryFn(id),
+    enabled: !!id,
   });
 };

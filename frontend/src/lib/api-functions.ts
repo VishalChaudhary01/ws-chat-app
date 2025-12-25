@@ -5,6 +5,8 @@ import type {
   SignupDTO,
   VerifyOTPDTO,
 } from "../validators/auth.validator";
+import type { CreateChatDTO } from "../validators/chat.validator";
+import type { SendMessageDTO } from "../validators/message.validator";
 import api from "./api-client";
 
 {
@@ -65,5 +67,40 @@ export const getProfileQueryFn = async (): Promise<ProfileResponse> => {
 
 export const getUsersQueryFn = async (): Promise<UsersResponse> => {
   const res = await api.get("/users");
+  return res.data;
+};
+
+{
+  /* ----------- Chat Query functoins ----------- */
+}
+export const getChatsQueryFn = async (): Promise<ChatsResponse> => {
+  const res = await api.get("/chats");
+  return res.data;
+};
+
+export const getMessagesQueryFn = async (
+  id: string,
+): Promise<MessagesResponse> => {
+  const res = await api.get(`/chats/${id}`);
+  return res.data;
+};
+
+{
+  /* ----------- Chat Mutation functoins ----------- */
+}
+export const createChatMutationFn = async (
+  input: CreateChatDTO,
+): Promise<any> => {
+  const res = await api.post("/chats", input);
+  return res.data;
+};
+
+{
+  /* ----------- Chat Mutation functoins ----------- */
+}
+export const sendMessageMutationFn = async (
+  input: SendMessageDTO,
+): Promise<SendMessageResponse> => {
+  const res = await api.post("/messages", input);
   return res.data;
 };
