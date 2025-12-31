@@ -3,6 +3,7 @@ import { StatusCode } from "@/config/http.config";
 import { AppError } from "@/utils/app-error";
 import { SendMessageInput } from "@/validators/message.validator";
 import { Request, Response } from "express";
+import { wsServer } from "..";
 
 export async function sendMessage(req: Request, res: Response) {
   const userId = req.userId;
@@ -86,7 +87,11 @@ export async function sendMessage(req: Request, res: Response) {
     },
   });
 
-  //   TODO SOCKET ---> emit message to all participants
+  // emit message to all participants
+  wsServer.emitToRoom(resolvedChatId, {
+    type: "new_message",
+    message,
+  });
 
   res
     .status(StatusCode.OK)

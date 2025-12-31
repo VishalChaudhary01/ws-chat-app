@@ -3,6 +3,7 @@ import { StatusCode } from "@/config/http.config";
 import { AppError } from "@/utils/app-error";
 import { CreateChatInput } from "@/validators/chat.validator";
 import { Request, Response } from "express";
+import { wsServer } from "..";
 
 export async function createChat(req: Request, res: Response) {
   const inputs: CreateChatInput = req.body;
@@ -113,7 +114,9 @@ export async function getUserChats(req: Request, res: Response) {
     },
   });
 
-  //   TODO (SOCKET) --> join to chat to get real time updates
+  // Subscribe chat rooms for real-time updates
+  const chatIds = chats.map((chat) => chat.id);
+  wsServer.subscribeUserToRooms(userId, chatIds);
 
   res
     .status(StatusCode.OK)
@@ -163,8 +166,6 @@ export async function getChatWithMessage(req: Request, res: Response) {
   if (!chat) {
     throw new AppError("Chat not found", StatusCode.NOT_FOUND);
   }
-
-  console.log(chat);
 
   res.status(StatusCode.OK).json({
     message: "Chat with messages fetched successfully",

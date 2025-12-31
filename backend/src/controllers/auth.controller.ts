@@ -440,7 +440,7 @@ export async function signout(req: Request, res: Response) {
 export async function rotateRefreshToken(req: Request, res: Response) {
   const refreshToken = getCookie(req, "refresh_token");
   if (!refreshToken) {
-    throw new AppError("Refresh token not found", StatusCode.UNAUTHORIZED);
+    throw new AppError("Refresh token not found", StatusCode.FORBIDDEN);
   }
   const hashedRefreshToken = hashToken(refreshToken);
   const refToken = await prisma.refreshToken.findFirst({
@@ -450,7 +450,7 @@ export async function rotateRefreshToken(req: Request, res: Response) {
   if (!refToken || refToken.expiresAt.getTime() < Date.now()) {
     throw new AppError(
       "Invalid or expired refresh_token",
-      StatusCode.UNAUTHORIZED
+      StatusCode.FORBIDDEN
     );
   }
 
@@ -461,7 +461,7 @@ export async function rotateRefreshToken(req: Request, res: Response) {
       data: { isActive: false },
     });
 
-    throw new AppError("Refresh token theft detected", StatusCode.UNAUTHORIZED);
+    throw new AppError("Refresh token theft detected", StatusCode.FORBIDDEN);
   }
 
   // revoke old token

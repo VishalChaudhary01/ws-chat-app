@@ -7,9 +7,13 @@ import { errorHandler } from "./middlewares/error-handler";
 import { AppError } from "./utils/app-error";
 import { StatusCode } from "./config/http.config";
 import appRoutes from "./routes";
+import { WebSocketServer } from "./services/websocket-service";
+import { createServer } from "http";
 
 export const app = express();
 const PORT = Env.PORT;
+
+const httpServer = createServer(app);
 
 app.use(cors({ origin: Env.FRONTEND_URL, credentials: true }));
 app.use(cookieParser());
@@ -21,12 +25,14 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/v1", appRoutes);
 
+export const wsServer = new WebSocketServer(httpServer);
+
 app.use((req: Request, _res: Response, next: NextFunction) => {
   next(new AppError(`API route ${req.path} not found`, StatusCode.NOT_FOUND));
 });
 
 app.use(errorHandler);
 
-app.listen(PORT, () =>
+httpServer.listen(PORT, () =>
   logger.info(`Server running at http://localhost:${PORT}`)
 );
