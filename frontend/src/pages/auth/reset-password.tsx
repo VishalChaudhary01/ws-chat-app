@@ -52,7 +52,7 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     const stage = localStorage.getItem("stage");
     if (stage !== "password_reset") {
-      navigate("/signin");
+      navigate("/auth/signin");
     }
   }, [navigate]);
 
@@ -80,7 +80,10 @@ export default function ResetPasswordPage() {
       </Button>
       <p className="mt-2 text-sm text-neutral-800 dark:text-neutral-400">
         Don't want to reset password?{" "}
-        <Link to="/signin" className="font-medium underline underline-offset-1">
+        <Link
+          to="/auth/signin"
+          className="font-medium underline underline-offset-1"
+        >
           Sign In
         </Link>
       </p>

@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
       onSuccess: (res) => {
         localStorage.setItem("stage", res.stage);
         toast.success(res.message);
-        navigate("/");
+        navigate("/auth/verify-otp");
       },
       onError: (error: any) => {
         toast.error(error.response.data.message || "Failed to signin");
@@ -67,7 +67,10 @@ export default function ForgotPasswordPage() {
       </Button>
       <p className="mt-2 text-sm text-neutral-800 dark:text-neutral-400">
         Don't want to reset password?{" "}
-        <Link to="/signin" className="font-medium underline underline-offset-1">
+        <Link
+          to="/auth/signin"
+          className="font-medium underline underline-offset-1"
+        >
           Sign In
         </Link>
       </p>

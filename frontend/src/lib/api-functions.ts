@@ -60,7 +60,9 @@ export const signoutMutationFn = async (): Promise<Response> => {
 {
   /* ----------- User Query functoins ----------- */
 }
-export const getProfileQueryFn = async (): Promise<ProfileResponse> => {
+export const getProfileQueryFn = async (): Promise<ProfileResponse | null> => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) null;
   const res = await api.get("/users/profile");
   return res.data;
 };

@@ -5,7 +5,7 @@ import { useProfileQuery } from "../lib/queries";
 export default function AppLayout() {
   const { data } = useProfileQuery();
 
-  if (!data?.user) return <Navigate to="/signin" replace />;
+  if (!data?.user) return <Navigate to="/auth/signin" replace />;
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-360">

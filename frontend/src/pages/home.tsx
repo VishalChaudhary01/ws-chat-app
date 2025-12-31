@@ -7,11 +7,15 @@ import {
 } from "../lib/queries";
 import { cn } from "../lib/utils";
 import { ChatForm } from "../components/chat-form";
-import { Loader2, MessageSquare } from "lucide-react";
+import { CircleUserRound, Loader2, MessageSquare } from "lucide-react";
+import { getWebSocketClient } from "../lib/websocket-instance";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function HomePage() {
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  const queryClient = useQueryClient();
 
   const { data: userData } = useProfileQuery();
   const userId = userData?.user.id;
@@ -20,6 +24,22 @@ export default function HomePage() {
   const chats = chatData?.chats;
 
   const { data, isPending } = useMessagesQuery(selectedChat?.id ?? "");
+
+  useEffect(() => {
+    const ws = getWebSocketClient();
+    if (!ws) return;
+    ws.on("open", () => {
+      console.log("WS connected!");
+    });
+
+    ws.on("new_message", (payload) => {
+      queryClient.invalidateQueries({
+        queryKey: ["messages", payload?.message?.chatId],
+      });
+    });
+
+    return () => ws.close();
+  }, []);
 
   useEffect(() => {
     if (selectedUser && chats) {
@@ -61,9 +81,13 @@ export default function HomePage() {
 
     return (
       <div className="flex h-14 items-center border-b border-neutral-200 bg-white px-4 dark:border-neutral-700 dark:bg-neutral-800">
-        <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
-          {displayName}
-        </h2>
+        <div className="flex items-center justify-start gap-2">
+          <CircleUserRound className="size-8 text-neutral-700 dark:text-neutral-100" />
+
+          <div className="text-base font-medium text-neutral-800 dark:text-neutral-50">
+            {displayName}
+          </div>
+        </div>
       </div>
     );
   };

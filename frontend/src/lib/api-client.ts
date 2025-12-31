@@ -24,10 +24,8 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401) {
       try {
-        originalRequest._retry = true;
-
         const { data } = await axios.post(
           `${baseURL}/api/v1/auth/rotate-token`,
           {},
@@ -41,11 +39,18 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem("accessToken");
-        if (!window.location.pathname.includes("/signin")) {
-          window.location.href = "/signin";
+        if (!window.location.pathname.includes("/auth")) {
+          window.location.href = "/auth/signin";
         }
         return Promise.reject(refreshError);
       }
+    } else if (error.response?.status === 403) {
+      // Don't attempt rotation, just clear and redirect
+      localStorage.removeItem("accessToken");
+      if (!window.location.pathname.includes("/signin")) {
+        window.location.href = "/signin";
+      }
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   },

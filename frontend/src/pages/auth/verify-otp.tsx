@@ -95,7 +95,7 @@ export default function VerifyOTPPage() {
   useEffect(() => {
     const stage = localStorage.getItem("stage");
     if (stage !== "code_verification") {
-      navigate("/signin");
+      navigate("/auth/signin");
     }
   }, [navigate]);
 

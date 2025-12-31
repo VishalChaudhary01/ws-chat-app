@@ -39,7 +39,7 @@ export default function SignupPage() {
       onSuccess: (res) => {
         toast.success(res.message);
         localStorage.setItem("stage", res.stage);
-        navigate("/verify-otp");
+        navigate("/auth/verify-otp");
       },
       onError: (error: any) => {
         toast.error(error.response.data.message || "Failed to signup");
@@ -75,7 +75,10 @@ export default function SignupPage() {
       </Button>
       <p className="mt-2 text-sm text-neutral-800 dark:text-neutral-400">
         Already have an account?{" "}
-        <Link to="/signin" className="font-medium underline underline-offset-1">
+        <Link
+          to="/auth/signin"
+          className="font-medium underline underline-offset-1"
+        >
           Sign In
         </Link>
       </p>

@@ -12,23 +12,23 @@ export default function App() {
   const authRoutes = [
     {
       element: <SigninPage />,
-      path: "/signin",
+      path: "/auth/signin",
     },
     {
       element: <SignupPage />,
-      path: "/signup",
+      path: "/auth/signup",
     },
     {
       element: <VerifyOTPPage />,
-      path: "verify-otp",
+      path: "/auth/verify-otp",
     },
     {
       element: <ForgotPasswordPage />,
-      path: "forgot-password",
+      path: "/auth/forgot-password",
     },
     {
       element: <ResetPasswordPage />,
-      path: "reset-password",
+      path: "/auth/reset-password",
     },
   ];
 

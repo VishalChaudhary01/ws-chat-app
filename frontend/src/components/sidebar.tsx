@@ -53,7 +53,7 @@ export const Sidebar = ({ setSelectedChat, setSelectedUser }: SidebarProps) => {
               <div
                 key={user.id}
                 onClick={() => handleSelectUser(user)}
-                className="flex cursor-pointer items-start justify-start gap-4 border-b border-neutral-300 p-4 dark:border-neutral-700"
+                className="flex cursor-pointer items-center justify-start gap-4 border-b border-neutral-300 p-4 dark:border-neutral-700"
               >
                 <CircleUserRound className="size-8 text-neutral-700 dark:text-neutral-100" />
 
@@ -66,7 +66,7 @@ export const Sidebar = ({ setSelectedChat, setSelectedUser }: SidebarProps) => {
             <div
               key={chat.id}
               onClick={() => handleSelect(chat)}
-              className="flex cursor-pointer items-start justify-start gap-4 border-b border-neutral-300 p-4 dark:border-neutral-700"
+              className="flex cursor-pointer items-center justify-start gap-4 border-b border-neutral-300 p-4 dark:border-neutral-700"
             >
               <CircleUserRound className="size-8 text-neutral-700 dark:text-neutral-100" />
 
